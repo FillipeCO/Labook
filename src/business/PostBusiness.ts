@@ -1,5 +1,5 @@
 import PostData from "../data/PostData";
-import Post from "../model/Post";
+import Post, { POST_TYPE } from "../model/Post";
 import { PostInputDTO } from "../types/postInputDTO";
 import { Authenticator } from "../services/Authenticator";
 import { IdGenerator } from "../services/IdGenerator";
@@ -56,38 +56,45 @@ export default class PostBusiness {
     return post;
   };
 
-  getFeed = async (token: string) => {
+  getFeed = async (token: string, page: number) => {
     const user = this.authenticator.getTokenData(token);
     if (!user) {
       throw new Error("Usuário não autenticado");
     }
 
-    const feed = await this.postData.getFeed(user.id);
+    if(!page){
+      throw new Error("Página não informada");
+    }
+
+    const feed = await this.postData.getFeed(user.id, page);
 
     return feed;
   };
 
-  getFeedByType = async (token: string, type: string) => {
+  getFeedByType = async (token: string, page: number, type: POST_TYPE) => {
     const user = this.authenticator.getTokenData(token);
     if (!user) {
       throw new Error("Usuário não autenticado");
     }
 
-    const feed = await this.postData.getFeedByType(user.id, type);
-
-    return feed;
-  };
-
-  getFeedByPage = async (token: string, page: number) => {
-    const user = this.authenticator.getTokenData(token);
-    if (!user) {
-      throw new Error("Usuário não autenticado");
+    if(!type){
+      throw new Error("Tipo de post não informado");
     }
 
-    const feed = await this.postData.getFeedByPage(user.id, page);
+    // verificar se o tipo é valido
+    if (type !== "NORMAL" && type !== "EVENT") {
+      throw new Error("Tipo de post inválido");
+    }
+
+    if (!page) {
+      throw new Error("Página não informada");
+    }
+
+    const feed = await this.postData.getFeedByType(user.id, page, type);
 
     return feed;
   };
+
 
   likePost = async (token: string, id: string) => {
     const user = this.authenticator.getTokenData(token);

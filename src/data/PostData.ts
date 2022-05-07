@@ -1,4 +1,4 @@
-import Post from "../model/Post";
+import Post, { POST_TYPE } from "../model/Post";
 import { BaseDatabase } from "./BaseDatabase";
 import { FindPostResponse } from "../types/findPostResponse";
 import { FindFollowersResponse } from "../types/findFollowersResponse";
@@ -41,7 +41,7 @@ export default class PostData extends BaseDatabase {
     }
   };
 
-  getFeed = async (id: string) => {
+  getFeed = async (id: string, page: number) => {
     try {
       const queryResultFollowers: FindFollowersResponse = await this.connection(
         this.FOLLOWERS_TABLE_NAME
@@ -58,19 +58,20 @@ export default class PostData extends BaseDatabase {
       )
         .select()
         .where({ user_id: followedUsersIds })
-        .orderBy("created_at", "desc");
+        .orderBy("created_at", "desc")
+        .limit(5)
+        .offset((page - 1) * 5);
 
       return queryResultPosts;
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(error.message);
-      } else {
-        throw new Error("Erro do banco !");
       }
+      throw new Error("Erro do banco !");
     }
   };
 
-  getFeedByType = async (id: string, type: string) => {
+  getFeedByType = async (id: string, page:number, type: POST_TYPE) => {
     try {
       const queryResultFollowers: FindFollowersResponse = await this.connection(
         this.FOLLOWERS_TABLE_NAME
@@ -87,34 +88,6 @@ export default class PostData extends BaseDatabase {
       )
         .select()
         .where({ user_id: followedUsersIds, post_type: type })
-        .orderBy("created_at", "desc");
-
-      return queryResultPosts;
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(error.message);
-      }
-      throw new Error("Erro do banco !");
-    }
-  };
-
-  getFeedByPage = async (id: string, page: number) => {
-    try {
-      const queryResultFollowers: FindFollowersResponse = await this.connection(
-        this.FOLLOWERS_TABLE_NAME
-      )
-        .select()
-        .where({ follower_id: id });
-
-      const followedUsersIds = queryResultFollowers.map(
-        (follower) => follower.followed_id
-      );
-
-      const queryResultPosts: FindPostResponse = await this.connection(
-        this.TABLE_NAME
-      )
-        .select()
-        .where({ user_id: followedUsersIds })
         .orderBy("created_at", "desc")
         .limit(5)
         .offset((page - 1) * 5);

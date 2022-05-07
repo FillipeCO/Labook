@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import PostBusiness from "../business/PostBusiness";
 import { PostInputDTO } from "../types/postInputDTO";
 import { CommentInputDTO } from "../types/commentInputDTO";
+import { POST_TYPE } from "../model/Post";
 
 export default class PostController {
   constructor(private postBusiness: PostBusiness) {}
@@ -46,7 +47,8 @@ export default class PostController {
   public getFeed = async (req: Request, res: Response) => {
     try {
       const token = req.headers.authorization as string;
-      const feed = await this.postBusiness.getFeed(token);
+      const page = req.params.page;
+      const feed = await this.postBusiness.getFeed(token, parseInt(page));
       res.status(200).send({
         message: "Feed encontrado com sucesso",
         feed,
@@ -62,27 +64,9 @@ export default class PostController {
   public getFeedByType = async (req: Request, res: Response) => {
     try {
       const token = req.headers.authorization as string;
-      const feed = await this.postBusiness.getFeedByType(
-        token,
-        req.params.type
-      );
-      res.status(200).send({
-        message: "Feed encontrado com sucesso",
-        feed,
-      });
-    } catch (error) {
-      if (error instanceof Error) {
-        return res.status(400).send(error.message);
-      }
-      res.status(500).send("Erro ao encontrar feed");
-    }
-  };
-
-  public getFeedByPage = async (req: Request, res: Response) => {
-    try {
-      const token = req.headers.authorization as string;
       const page = req.params.page;
-      const feed = await this.postBusiness.getFeedByPage(token, parseInt(page));
+      const type = req.params.type as POST_TYPE;
+      const feed = await this.postBusiness.getFeedByType(token, parseInt(page), type);
       res.status(200).send({
         message: "Feed encontrado com sucesso",
         feed,
