@@ -1,7 +1,7 @@
 {
-    "name": "to-do-list",
+    "name": "labook",
     "version": "1.0.0",
-    "description": "## ESTRUTURA DE DADOS",
+    "description": "Projeto Backend com arquitetura em camada de serviços",
     "main": "index.js",
     "scripts": {
         "dev": "ts-node-dev ./src/index.ts",
@@ -10,7 +10,7 @@
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "keywords": [],
-    "author": "",
+    "author": "Fillipe Dias Correia",
     "license": "ISC",
     "dependencies": {
         "bcryptjs": "^2.4.3",
