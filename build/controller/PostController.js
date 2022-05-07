@@ -52,7 +52,8 @@ class PostController {
         this.getFeed = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const token = req.headers.authorization;
-                const feed = yield this.postBusiness.getFeed(token);
+                const page = req.params.page;
+                const feed = yield this.postBusiness.getFeed(token, parseInt(page));
                 res.status(200).send({
                     message: "Feed encontrado com sucesso",
                     feed,
@@ -68,24 +69,9 @@ class PostController {
         this.getFeedByType = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const token = req.headers.authorization;
-                const feed = yield this.postBusiness.getFeedByType(token, req.params.type);
-                res.status(200).send({
-                    message: "Feed encontrado com sucesso",
-                    feed,
-                });
-            }
-            catch (error) {
-                if (error instanceof Error) {
-                    return res.status(400).send(error.message);
-                }
-                res.status(500).send("Erro ao encontrar feed");
-            }
-        });
-        this.getFeedByPage = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            try {
-                const token = req.headers.authorization;
                 const page = req.params.page;
-                const feed = yield this.postBusiness.getFeedByPage(token, parseInt(page));
+                const type = req.params.type;
+                const feed = yield this.postBusiness.getFeedByType(token, parseInt(page), type);
                 res.status(200).send({
                     message: "Feed encontrado com sucesso",
                     feed,

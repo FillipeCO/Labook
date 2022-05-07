@@ -40,28 +40,32 @@ class PostBusiness {
             }
             return post;
         });
-        this.getFeed = (token) => __awaiter(this, void 0, void 0, function* () {
+        this.getFeed = (token, page) => __awaiter(this, void 0, void 0, function* () {
             const user = this.authenticator.getTokenData(token);
             if (!user) {
                 throw new Error("Usuário não autenticado");
             }
-            const feed = yield this.postData.getFeed(user.id);
+            if (!page) {
+                throw new Error("Página não informada");
+            }
+            const feed = yield this.postData.getFeed(user.id, page);
             return feed;
         });
-        this.getFeedByType = (token, type) => __awaiter(this, void 0, void 0, function* () {
+        this.getFeedByType = (token, page, type) => __awaiter(this, void 0, void 0, function* () {
             const user = this.authenticator.getTokenData(token);
             if (!user) {
                 throw new Error("Usuário não autenticado");
             }
-            const feed = yield this.postData.getFeedByType(user.id, type);
-            return feed;
-        });
-        this.getFeedByPage = (token, page) => __awaiter(this, void 0, void 0, function* () {
-            const user = this.authenticator.getTokenData(token);
-            if (!user) {
-                throw new Error("Usuário não autenticado");
+            if (!type) {
+                throw new Error("Tipo de post não informado");
             }
-            const feed = yield this.postData.getFeedByPage(user.id, page);
+            if (type !== "NORMAL" && type !== "EVENT") {
+                throw new Error("Tipo de post inválido");
+            }
+            if (!page) {
+                throw new Error("Página não informada");
+            }
+            const feed = yield this.postData.getFeedByType(user.id, page, type);
             return feed;
         });
         this.likePost = (token, id) => __awaiter(this, void 0, void 0, function* () {

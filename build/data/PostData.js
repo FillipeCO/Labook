@@ -46,7 +46,7 @@ class PostData extends BaseDatabase_1.BaseDatabase {
                 }
             }
         });
-        this.getFeed = (id) => __awaiter(this, void 0, void 0, function* () {
+        this.getFeed = (id, page) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const queryResultFollowers = yield this.connection(this.FOLLOWERS_TABLE_NAME)
                     .select()
@@ -55,28 +55,9 @@ class PostData extends BaseDatabase_1.BaseDatabase {
                 const queryResultPosts = yield this.connection(this.TABLE_NAME)
                     .select()
                     .where({ user_id: followedUsersIds })
-                    .orderBy("created_at", "desc");
-                return queryResultPosts;
-            }
-            catch (error) {
-                if (error instanceof Error) {
-                    throw new Error(error.message);
-                }
-                else {
-                    throw new Error("Erro do banco !");
-                }
-            }
-        });
-        this.getFeedByType = (id, type) => __awaiter(this, void 0, void 0, function* () {
-            try {
-                const queryResultFollowers = yield this.connection(this.FOLLOWERS_TABLE_NAME)
-                    .select()
-                    .where({ follower_id: id });
-                const followedUsersIds = queryResultFollowers.map((follower) => follower.followed_id);
-                const queryResultPosts = yield this.connection(this.TABLE_NAME)
-                    .select()
-                    .where({ user_id: followedUsersIds, post_type: type })
-                    .orderBy("created_at", "desc");
+                    .orderBy("created_at", "desc")
+                    .limit(5)
+                    .offset((page - 1) * 5);
                 return queryResultPosts;
             }
             catch (error) {
@@ -86,7 +67,7 @@ class PostData extends BaseDatabase_1.BaseDatabase {
                 throw new Error("Erro do banco !");
             }
         });
-        this.getFeedByPage = (id, page) => __awaiter(this, void 0, void 0, function* () {
+        this.getFeedByType = (id, page, type) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const queryResultFollowers = yield this.connection(this.FOLLOWERS_TABLE_NAME)
                     .select()
@@ -94,7 +75,7 @@ class PostData extends BaseDatabase_1.BaseDatabase {
                 const followedUsersIds = queryResultFollowers.map((follower) => follower.followed_id);
                 const queryResultPosts = yield this.connection(this.TABLE_NAME)
                     .select()
-                    .where({ user_id: followedUsersIds })
+                    .where({ user_id: followedUsersIds, post_type: type })
                     .orderBy("created_at", "desc")
                     .limit(5)
                     .offset((page - 1) * 5);
