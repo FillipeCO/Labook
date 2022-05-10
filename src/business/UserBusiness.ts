@@ -75,7 +75,7 @@ export default class UserBusiness {
     if (!followed_id) {
       throw new Error("Campos inválidos");
     }
-
+    // verificar se o usuario esta autenticado
     if (!token) {
       throw new Error("Token inválido");
     }
@@ -112,7 +112,7 @@ export default class UserBusiness {
     if (!followed_id) {
       throw new Error("Campos inválidos");
     }
-
+    // verificar se o usuario esta autenticado
     if (!token) {
       throw new Error("Token inválido");
     }
